@@ -10,14 +10,16 @@
 #include <sys/types.h>
 #include <time.h> 
 
+#define BUFFER_SIZE 5
+
 int main(int argc, char *argv[]){
     int sockfd = 0, n = 0;
     uint8_t m = 0,r = 0, g = 0, b = 0, s = 0;
     int bytesWritten = 0;
-    char buf[5];
+    char buf[BUFFER_SIZE];
     struct sockaddr_in serv_addr;
     
-    memset(buf,'0',5*sizeof(char)); 
+    memset(buf,'0',BUFFER_SIZE*sizeof(char)); 
     if(argc < 6){
         printf("RGB LED Control cmdline control v:0.1 \n usage: %s <ip> <mode> <r> <g> <b> <s> \n modes : 0 = off , 1 = static, 2 = strobe, 3 = fade\n",argv[0]);
     }
@@ -32,13 +34,13 @@ int main(int argc, char *argv[]){
         g = (uint8_t)atoi(argv[4]);
         b = (uint8_t)atoi(argv[5]);
         s = (uint8_t)atoi(argv[6]);
-        printf("%x%x%x%x%x \t",m,r,g,b,s);
+        printf("%2x%2x%2x%2x%2x \t\t",m,r,g,b,s);
         buf[0]= (char) m;
         buf[1]= (char) r;
         buf[2]= (char) g;
         buf[3]= (char) b;
         buf[4]= (char) s;
-        printf("[OK]\n");
+        printf("\t\t[OK]\n");
 
         memset(&serv_addr, '0', sizeof(serv_addr)); 
 
@@ -48,13 +50,13 @@ int main(int argc, char *argv[]){
             printf("\n inet_pton error occured\n");
             return 1;
         } 
-        printf("connecting to %s \t",argv[1]);
+        printf("connecting to %s \t \t \t \t \t",argv[1]);
         if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
             printf("\n Error : Connect Failed \n");
             return 1;
         }
         printf("[OK]\n");
-        printf("sending packet %x %x %x %x to %s \t",m,r,g,b,argv[1]);
+        printf("sending packet %2x%2x%2x%2x to %s \t\t\t",m,r,g,b,argv[1]);
         bytesWritten = write(sockfd,buf,sizeof(buf));
         printf("[OK]\n");
         printf("%d bytes sent.\n",bytesWritten);
